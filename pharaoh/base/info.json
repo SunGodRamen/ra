@@ -1,0 +1,6 @@
+{
+    "keyboard_name": "Pharaoh",
+    "usb": {
+        "pid": "0x1111"
+    }
+}
