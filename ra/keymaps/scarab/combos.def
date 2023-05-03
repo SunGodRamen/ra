@@ -1,0 +1,56 @@
+// UNMAPPED
+// -----------------------------------------------------
+//   name          result          chord keys
+
+//COMB(,          ,     KC_, KC_)
+
+// HOTKEYS
+// -----------------------------------------------------
+COMB(CMB_LEAD,          QK_LEAD,            KC_J, KC_K)
+
+COMB(CMB_YANK,          LGUI(KC_C),         KC_A, LCTL_T(KC_E))
+COMB(CMB_PUT,           LGUI(KC_V),         KC_A, LGUI_T(KC_U))
+COMB(CMB_BOARD,         LCTL(KC_V),         KC_A, LALT_T(KC_O))
+
+COMB(QUIT,              LGUI(KC_Q),         KC_Q, LALT_T(KC_O))
+COMB(VS_CMD,            LSFT(LCMD(KC_P)),   KC_P, LGUI_T(KC_U))
+COMB(SAVE,              LGUI(KC_S),         KC_N, KC_S)
+
+// APPLICATIONS
+// -----------------------------------------------------
+COMB(CMB_IDE,           LSFT(LCTL(KC_SCLN)), KC_F, KC_G)
+COMB(CMB_BROWSE,        LSFT(LCTL(KC_B)),   KC_D, KC_H)
+COMB(CMB_TERM,          LSFT(LCTL(KC_X)),   KC_B, KC_M)
+
+// CORE
+// -----------------------------------------------------
+COMB(BSPC,              KC_BSPC,            KC_H, KC_T)
+COMB(DEL,               KC_DEL,             KC_T, KC_N)
+COMB(TAB,               KC_TAB,             KC_H, KC_N)
+COMB(ENTR,              KC_ENT,             KC_M, KC_W)
+COMB(ESC,               KC_ESC,             KC_C, KC_R)
+COMB(TILD,              KC_TILD,            KC_COMM, KC_DOT)
+COMB(GRAVE,             KC_GRAVE,           KC_DQUO, KC_Q)
+COMB(EQL,               KC_EQL,             KC_M, KC_V)
+COMB(MINS,              KC_MINS,            KC_W, KC_V)
+COMB(FSLASH,            KC_SLSH,            KC_T, KC_M)
+COMB(BSLASH,            KC_BSLS,            LCTL_T(KC_E), KC_K)
+COMB(PIPE,              KC_PIPE,            KC_T, KC_C)
+
+
+// NUMBERS LAYER
+// -----------------------------------------------------
+COMB(LBRK,              KC_LBRC,            KC_7, KC_8)
+COMB(RBRK,              KC_RBRC,            KC_9, KC_8)
+COMB(LCBR,              KC_LCBR,            KC_1, KC_2)
+COMB(RCBR,              KC_RCBR,            KC_2, KC_3)
+COMB(LPRN,              KC_LPRN,            KC_4, KC_5)
+COMB(RPRN,              KC_RPRN,            KC_5, KC_6)
+COMB(GT,                KC_GT,              KC_5, KC_3)
+COMB(LT,                KC_LT,              KC_5, KC_1)
+
+// NAVIGATE
+// -----------------------------------------------------
+COMB(NV_ENTR,           KC_ENT,             KC_HOME, LCMD(KC_W))
+COMB(PGDN,              KC_PGDN,            LCTL(KC_TAB), LSFT(LCTL(KC_TAB)))
+COMB(PGUP,              KC_PGUP,            LCMD(KC_T), LCMD(KC_R))
