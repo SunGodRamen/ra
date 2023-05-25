@@ -111,8 +111,8 @@ enum shorthand_function {
 #define DQ_ KC_DQUO
 #define DT_ KC_DOT
 #define AO_ LALT_T(KC_O)
-#define CE_ LCTL_T(KC_E)
-#define GU_ LGUI_T(KC_U)
+#define CE_ LGUI_T(KC_E)
+#define GU_ LCTL_T(KC_U)
 
 #define ArL  KC_LEFT
 #define ArD  KC_DOWN
@@ -123,8 +123,8 @@ enum shorthand_function {
 
 #define CTAB  LCTL(KC_TAB)
 #define SCTAB LSFT(LCTL(KC_TAB))
-#define NTAB  LCMD(KC_T)
-#define REFR  LCMD(KC_R)
+#define NTAB  LCTL(KC_T)
+#define REFR  LCTL(KC_R)
 
 #define ___ KC_TRNS
 #define FROM KC_TRNS
@@ -159,9 +159,7 @@ void repeat(uint16_t keycode, int rep) {
 
 #ifdef LEADER_ENABLE
 void leader_end_user(void) {
-        if (leader_sequence_two_keys(KC_E, KC_F)) {
-            SEND_STRING("AVONSTU1@ford.com");
-        } else if (leader_sequence_two_keys(KC_E, KC_G)) {
+        if (leader_sequence_two_keys(KC_E, KC_G)) {
             SEND_STRING("AVONS394@gmail.com");
         } else if (leader_sequence_two_keys(KC_SPACE, KC_SPACE)) {
             // INTJ SEARCH ALL
