@@ -120,11 +120,10 @@ enum shorthand_function {
 #define ArR  KC_RIGHT
 #define HOME KC_HOME
 #define END  KC_END
-
-#define CTAB  LCTL(KC_TAB)
-#define SCTAB LSFT(LCTL(KC_TAB))
-#define NTAB  LCTL(KC_T)
-#define REFR  LCTL(KC_R)
+#define P_UP  KC_PGUP
+#define P_DN  KC_PGDN
+#define N_TAB  LCTL(KC_TAB)
+#define P_TAB  LSFT(LCTL(KC_TAB))
 
 #define ___ KC_TRNS
 #define FROM KC_TRNS
@@ -359,9 +358,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                ╚═════╩═════╝       ╚═════╩═════╝                                ║
                                                                                                 ║        */
     [_NAVIGATE] = LAYOUT(/* NAVIGATE :1 ════════════════════════════════════════════════════════╣        */
-                    ___, ___, ___, ___, ___,        ___, ___, NTAB, REFR, ___,
+                    ___, ___, ___, ___, ___,        ___, ___, N_TAB, P_TAB, ___,
                     ___, ___, ___, ___, ___,        ___, ArL, ArD, ArU, ArR,
-                    ___, ___, ___, ___, ___,        ___, HOME, SCTAB, CTAB, END,
+                    ___, ___, ___, ___, ___,        ___, HOME, P_DN, P_UP, END,
 
                                    ___, ___,        FROM, ___
 
@@ -437,8 +436,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                ╚═════╩═════╝       ╚═════╩═════╝                                ║
                                                                                                 ║        */
     [_MACRO] = LAYOUT(/*     MACRO :4 ══════════════════════════════════════════════════════════╣        */
-             ___, ___, ___, ___, ___,              ___, ___, ___, ___, ___,
-             ___, ___, DM_PLY2, DM_PLY1, T_FLOW,   ___, ___, ___, ___, ___,
+                ___, ___, ___, ___, ___,           ___, ___, ___, ___, ___,
+             ___, ___, DM_PLY2, DM_PLY1, ___,      ___, ___, ___, ___, ___,
              ___, ___, DM_REC2, DM_REC1, ___,      ___, ___, ___, ___, ___,
 
                                    FROM, ___, ___, MEDIA
@@ -463,7 +462,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                                                                 ║        */
     [_MEDIA] = LAYOUT(/*     MEDIA :5 ══════════════════════════════════════════════════════════╣        */
                      ___, ___, ___, ___, ___,      ___, ___, ___, ___, ___,
-            ___, ___, M_BACK, M_FWRD, KC_ENTER,      PLAY, PRV, VDN, VUP, NXT,
+                     ___, ___, ___, ___, ___,      PLAY, PRV, VDN, VUP, NXT,
                      ___, ___, ___, ___, ___,      ___, ___, ___, ___, ___,
 
                                        ___, ___, ___, FROM
