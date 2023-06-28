@@ -10,7 +10,7 @@ COMB(CMB_LEAD,          QK_LEAD,            KC_J, KC_K)
 
 COMB(CMB_YANK,          LCTL(KC_C),         KC_A, LGUI_T(KC_E))
 COMB(CMB_PUT,           LCTL(KC_V),         KC_A, LCTL_T(KC_U))
-COMB(CMB_BOARD,         LCTL(LSFT((KC_V)),         KC_A, LALT_T(KC_O))
+COMB(CMB_BOARD,         LCTL(LSFT(KC_V)),   KC_A, LALT_T(KC_O))
 
 COMB(QUIT,              LCTL(KC_Q),         KC_Q, LALT_T(KC_O))
 COMB(VS_CMD,            LSFT(LCTL(KC_P)),   KC_P, LCTL_T(KC_U))
