@@ -41,6 +41,28 @@ enum _layers { _INSERT, _NAVIGATE, _NUMBERS, _FUNCTION, _MACRO, _MEDIA };
 #include "feature/os_keys/os_keys.h"
 #endif
 
+
+/*══════════════════════════════════════════════════════════════════════════════════════════════╣
+                 _____ _ _ _ _____ _____    _____ _____ _____ ____  _____                       ║
+                |   __| | | |  _  |  _  |  |  |  |  _  |   | |    \|   __|                      ║
+                |__   | | | |     |   __|  |     |     | | | |  |  |__   |                      ║
+                |_____|_____|__|__|__|     |__|__|__|__|_|___|____/|_____|                      ║
+                                                                                                ║
+*═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
+
+const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
+    // left hand
+    {{4, 4}, {3, 4}, {2, 4}, {1, 4}, {0, 4}},
+    {{4, 5}, {3, 5}, {2, 5}, {1, 5}, {0, 5}},
+    {{4, 6}, {3, 6}, {2, 6}, {1, 6}, {0, 6}},
+    {{KC_NO, KC_NO}, {KC_NO, KC_NO}, {KC_NO, KC_NO}, {1, 7}, {0, 7}},
+    // right hand
+    {{4, 0}, {3, 0}, {2, 0}, {1, 0}, {0, 0}},
+    {{4, 1}, {3, 1}, {2, 1}, {1, 1}, {0, 1}},
+    {{4, 2}, {3, 2}, {2, 2}, {1, 2}, {0, 2}},
+    {{1, 3}, {0, 3}, {KC_NO, KC_NO}, {KC_NO, KC_NO}, {KC_NO, KC_NO}}
+};
+
 /*══════════════════════════════════════════════════════════════════════════════════════════════╣
                              ___  _    _  ___  ___  ___  ___                                    ║
                             | . || |  | || . |/ __>| __>/ __>                                   ║
@@ -162,17 +184,6 @@ void repeat(uint16_t keycode, int rep) {
 void leader_end_user(void) {
         if (leader_sequence_two_keys(KC_E, KC_G)) {
             SEND_STRING("AVONS394@gmail.com");
-        } else if (leader_sequence_two_keys(KC_SPACE, KC_SPACE)) {
-            // INTJ SEARCH ALL
-            tap_code16(KC_LSFT);
-            tap_code16(KC_LSFT);
-        } else if (leader_sequence_one_key(KC_O)) {
-            // INTJ OPEN
-            register_code(KC_LGUI);
-            register_code(KC_LSFT);
-            tap_code16(KC_O);
-            unregister_code(KC_LSFT);
-            unregister_code(KC_LGUI);
         } else if (leader_sequence_one_key(KC_P)) {
             // VSCode Cmd
             register_code(KC_LSFT);

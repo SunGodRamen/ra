@@ -7,6 +7,7 @@
 // HOTKEYS
 // -----------------------------------------------------
 COMB(CMB_LEAD,          QK_LEAD,            KC_J, KC_K)
+COMB(CMB_SWAP,          SH_MON,            LT(1,KC_SPACE), MO(2))
 
 COMB(CMB_YANK,          LCTL(KC_C),         KC_A, LGUI_T(KC_E))
 COMB(CMB_PUT,           LCTL(KC_V),         KC_A, LCTL_T(KC_U))
