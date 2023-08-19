@@ -1,7 +1,10 @@
 //mod_keys.h
+#ifndef MOD_KEYS_H
+#define MOD_KEYS_H
+
 #pragma once
 #include "quantum.h"
-#include "action.h"
+#include "feature/log/log.h"
 
 typedef struct {
     uint16_t keycode;
@@ -9,6 +12,6 @@ typedef struct {
     uint8_t modifier;
 } custom_mod_key_t;
 
-void process_custom_shift_keys(uint16_t keycode, keyrecord_t *record, void *data);
-void process_custom_option_keys(uint16_t keycode, keyrecord_t *record, void *data);
-bool process_custom_mod_keys(uint16_t keycode, keyrecord_t *record);
+bool process_record_mod_keys(uint16_t keycode, keyrecord_t *record);
+
+#endif

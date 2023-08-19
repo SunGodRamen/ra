@@ -8,11 +8,15 @@
                     ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝                             ║
 *═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
 
-//keymap.c
 #include "quantum.h"
 #include "pharaoh.h"
 
 enum _layers { _INSERT, _NAVIGATE, _NUMBERS, _FUNCTION, _MACRO, _MEDIA };
+
+// key aliases
+#include "aliases.h"
+#include "feature/log/log.h"
+
 
 /*══════════════════════════════════════════════════════════════════════════════════════════════╣
                          ___  ___  ___  ___  _ _  ___  ___  ___                                 ║
@@ -22,10 +26,27 @@ enum _layers { _INSERT, _NAVIGATE, _NUMBERS, _FUNCTION, _MACRO, _MEDIA };
                                                                                                 ║
 *═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
 
-#include "print.h"
-#include "g/keymap_combo.h"
+#ifdef COMBO_ENABLE
+#include "feature/combos/keymap_combo.h"
+#endif
 
-#ifdef PROCESS_CUSTOM_KEYS
+#ifdef SWAP_HANDS_ENABLE
+#include "feature/swap_hands/swap_hands.h"
+#endif
+
+#ifdef OS_DETECTION_ENABLE
+#include "feature/os_detect/os_detect.h"
+#endif
+
+#ifdef LEADER_ENABLE
+#include "feature/leader_key/leader_key.h"
+#endif
+
+#ifdef RAW_ENABLE
+#include "feature/raw_hid/custom_raw_hid.h"
+#endif
+
+#ifdef PROCESS_FEATURES
 #include "feature/feature_manager.h"
 #endif
 
@@ -33,207 +54,10 @@ enum _layers { _INSERT, _NAVIGATE, _NUMBERS, _FUNCTION, _MACRO, _MEDIA };
 #include "feature/mod_keys/mod_keys.h"
 #endif
 
-#ifdef RAW_ENABLE
-#include "feature/app_keys/app_keys.h"
-#endif
-
-#ifdef OS_DETECTION_ENABLE
-#include "feature/os_keys/os_keys.h"
-#endif
-
-
-/*══════════════════════════════════════════════════════════════════════════════════════════════╣
-                 _____ _ _ _ _____ _____    _____ _____ _____ ____  _____                       ║
-                |   __| | | |  _  |  _  |  |  |  |  _  |   | |    \|   __|                      ║
-                |__   | | | |     |   __|  |     |     | | | |  |  |__   |                      ║
-                |_____|_____|__|__|__|     |__|__|__|__|_|___|____/|_____|                      ║
-                                                                                                ║
-*═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
-
-const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
-    // left hand
-    {{4, 4}, {3, 4}, {2, 4}, {1, 4}, {0, 4}},
-    {{4, 5}, {3, 5}, {2, 5}, {1, 5}, {0, 5}},
-    {{4, 6}, {3, 6}, {2, 6}, {1, 6}, {0, 6}},
-    {{KC_NO, KC_NO}, {KC_NO, KC_NO}, {KC_NO, KC_NO}, {1, 7}, {0, 7}},
-    // right hand
-    {{4, 0}, {3, 0}, {2, 0}, {1, 0}, {0, 0}},
-    {{4, 1}, {3, 1}, {2, 1}, {1, 1}, {0, 1}},
-    {{4, 2}, {3, 2}, {2, 2}, {1, 2}, {0, 2}},
-    {{1, 3}, {0, 3}, {KC_NO, KC_NO}, {KC_NO, KC_NO}, {KC_NO, KC_NO}}
-};
-
-/*══════════════════════════════════════════════════════════════════════════════════════════════╣
-                             ___  _    _  ___  ___  ___  ___                                    ║
-                            | . || |  | || . |/ __>| __>/ __>                                   ║
-                            |   || |_ | ||   |\__ \| _> \__ \                                   ║
-                            |_|_||___||_||_|_|<___/|___><___/                                   ║
-                                                                                                ║
-*═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
-
-enum shorthand_letter {
-    A_ = KC_A,
-    B_,
-    C_,
-    D_,
-    E_,
-    F_,
-    G_,
-    H_,
-    I_,
-    J_,
-    K_,
-    L_,
-    M_,
-    N_,
-    O_,
-    P_,
-    Q_,
-    R_,
-    S_,
-    T_,
-    U_,
-    V_,
-    W_,
-    X_,
-    Y_,
-    Z_,
-};
-
-enum shorthand_number {
-    _1 = KC_1,
-    _2,
-    _3,
-    _4,
-    _5,
-    _6,
-    _7,
-    _8,
-    _9,
-    _0,
-};
-
-enum shorthand_function {
-    _F1 = KC_F1,
-    _F2,
-    _F3,
-    _F4,
-    _F5,
-    _F6,
-    _F7,
-    _F8,
-    _F9,
-    _F10,
-    _F11,
-    _F12,
-};
-
-#define CLN_ KC_COLN
-#define CM_ KC_COMM
-#define DQ_ KC_DQUO
-#define DT_ KC_DOT
-#define AO_ LALT_T(KC_O)
-#define CE_ LGUI_T(KC_E)
-#define GU_ LCTL_T(KC_U)
-
-#define ArL  KC_LEFT
-#define ArD  KC_DOWN
-#define ArU  KC_UP
-#define ArR  KC_RIGHT
-#define HOME KC_HOME
-#define END  KC_END
-#define P_UP  KC_PGUP
-#define P_DN  KC_PGDN
-#define N_TAB  LCTL(KC_TAB)
-#define P_TAB  LSFT(LCTL(KC_TAB))
-#define N_APP  LALT(KC_TAB)
-#define P_APP  LSFT(LALT(KC_TAB))
-
-#define ___ KC_TRNS
-#define FROM KC_TRNS
-
-#define S_TAB LSFT_T(KC_TAB)
-#define NUMBR MO(2)
-#define NV_SPC LT(1,KC_SPACE)
-#define MACRO MO(4)
-#define LEAD KC_LEAD
-#define MEDIA MO(5)
-#define PLAY KC_MPLY
-#define NXT KC_MNXT
-#define PRV KC_MPRV
-#define VDN KC_VOLD
-#define VUP KC_VOLU
-
-void repeat(uint16_t keycode, int rep) {
-    for (int n = rep; n > 0; n--) {
-        register_code16(keycode);
-        unregister_code16(keycode);
-    }
+void keyboard_post_init_user(void) {
+    log_init();
 }
 
-/*══════════════════════════════════════════════════════════════════════════════════════════════╣
-                     _                    _             _  __                                   ║
-                    | |     ___  __ _  __| | ___ _ __  | |/ /  ___ _   _                        ║
-                    | |    / _ \/ _` |/ _` |/ _ \ '__| |    \ / _ \ | | |                       ║
-                    | |___|  __/ (_| | (_| |  __/ |    | |\  \  __/ |_| |                       ║
-                    \_____/\___|\__,_|\__,_|\___|_|    \_| \_/\___|\__, |                       ║
-                                                                   |___/                        ║
-*═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
-
-#ifdef LEADER_ENABLE
-void leader_end_user(void) {
-        if (leader_sequence_two_keys(KC_E, KC_G)) {
-            SEND_STRING("AVONS394@gmail.com");
-        } else if (leader_sequence_one_key(KC_P)) {
-            // VSCode Cmd
-            register_code(KC_LSFT);
-            register_code(KC_LGUI);
-            tap_code16(KC_P);
-            unregister_code(KC_LGUI);
-            unregister_code(KC_LSFT);
-        } else if (leader_sequence_one_key(KC_DQUO)) {
-            // QUOT and go between
-            tap_code16(KC_QUOT);
-            tap_code16(KC_QUOT);
-            tap_code16(KC_LEFT);
-        } else if (leader_sequence_one_key(KC_H)) {
-            // HIDE
-            register_code(KC_LGUI);
-            tap_code16(KC_H);
-            unregister_code(KC_LGUI);
-        } else if (leader_sequence_two_keys(KC_I, KC_F)) {
-        // CODE SHORTHAND
-        // IF
-            send_string("if (  ) {  }");
-            repeat(KC_LEFT, 7);
-        } else if (leader_sequence_two_keys(KC_F, KC_R)) {
-        // FOR
-            send_string("for (  ) {  }");
-            repeat(KC_LEFT, 7);
-        } else if (leader_sequence_one_key(KC_F)) {
-        // FALSE
-            send_string("false");
-        } else if (leader_sequence_one_key(KC_T)) {
-        // TRUE
-            send_string("true");
-        } else if (leader_sequence_three_keys(KC_I, KC_N, KC_T)) {
-        // INT I IN
-            send_string("int i=0; i< ; i++");
-            repeat(KC_LEFT, 6);
-        } else if (leader_sequence_two_keys(KC_S, KC_H)) {
-        // SHEBANG
-            send_string("#!/usr/bin/env  ");
-        } else if (leader_sequence_three_keys(KC_S, KC_S, KC_H)) {
-        // SSH KEYGEN
-            send_string("ssh-keygen -t ed25519 -C ");
-            tap_code16(KC_DQUO);
-            tap_code16(KC_DQUO);
-            tap_code16(KC_LEFT);
-        } else if (leader_sequence_two_keys(KC_G, KC_P)) {
-            send_string("git push");
-        }
-}
-#endif
 
 /*══════════════════════════════════════════════════════════════════════════════════════════════╣
                 ___  ___  ___  ___  ___  ___  ___   ___  ___  ___  ___  ___  ___                ║
@@ -244,77 +68,40 @@ void leader_end_user(void) {
 *═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-
-#ifdef PROCESS_CUSTOM_KEYS
-    if (!process_custom_keys(keycode, record)) {
-        return false;
-    }
-#endif
-
+    // if a key is used by the feature, it returns false to stop processing the key
 #ifdef PROCESS_CUSTOM_MOD_KEYS
-    if (!process_custom_mod_keys(keycode, record)) {
+    if (!process_record_mod_keys(keycode, record)){
+        log_key_event(LOG_LEVEL_INFO, "process_record_mod_keys", keycode, record);
         return false;
     }
 #endif
-
-#ifdef PROCESS_RAWHID_KEYS
-    if (!process_custom_app_keys(keycode, record)) {
+#ifdef PROCESS_FEATURES
+    if (!process_record_feature(keycode, record)) {
+        log_key_event(LOG_LEVEL_INFO, "process_record_feature", keycode, record);
         return false;
     }
 #endif
-
-#ifdef OS_DETECTION_ENABLE
-    if (!process_custom_os_keys(keycode, record)) {
-        return false;
-    }
-#endif
-
-    return true;
-
-}
-
-/*══════════════════════════════════════════════════════════════════════════════════════════════╣
-                                __ __  ___  ___  ___  _ __  _                                   ║
-                               |  \  \| . ||_ _|| . \| |\ \/                                    ║
-                               |     ||   | | | |   /| | \ \                                    ║
-                               |_|_|_||_|_| |_| |_\_\|_|_/\_\                                   ║
-                                                                                                ║
-*═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
-
-void matrix_init_user(void) {
-#ifdef OS_DETECTION_ENABLE
-    swap_control_and_gui_on_windows_and_linux();
-#endif
-}
-
-void matrix_scan_user(void) {
-
-#ifdef PROCESS_CUSTOM_KEYS
-    process_custom_matrix_scan();
-#endif
-
-}
-
-void keyboard_post_init_user(void) {
-#ifdef PROCESS_CUSTOM_KEYS
-    process_keyboard_init();
-#endif
-}
-
-/*══════════════════════════════════════════════════════════════════════════════════════════════╣
-                             _____ _____ _ _ _    _____ _____ ____                              ║
-                            | __  |  _  | | | |  |  |  |     |    \                             ║
-                            |    -|     | | | |  |     |-   -|  |  |                            ║
-                            |__|__|__|__|_____|  |__|__|_____|____/                             ║
-                                                                                                ║
-*═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
-void raw_hid_receive(uint8_t *data, uint8_t length) {
-
 #ifdef RAW_ENABLE
-    process_app_driver(data, length);
+    if (!process_record_raw_hid(keycode, record)) {
+        log_key_event(LOG_LEVEL_INFO, "process_record_raw_hid", keycode, record);
+        return false;
+    }
 #endif
-
+#ifdef LEADER_ENABLE
+    if (!process_record_leader(keycode, record)) {
+        log_key_event(LOG_LEVEL_INFO, "process_record_leader", keycode, record);
+        return false;
+    }
+#endif
+#ifdef OS_DETECTION_ENABLE
+    if (!process_record_os(keycode, record)) {
+        log_key_event(LOG_LEVEL_INFO, "process_record_os", keycode, record);
+        return false;
+    }
+#endif
+    return true;
 }
+
 
 /*══════════════════════════════════════════════════════════════════════════════════════════════╣
                              _ __ ___  _ _  __ __  ___  ___  ___                                ║
@@ -346,12 +133,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                                                                 ║        */
     [_INSERT] = LAYOUT(/* INSERT :0 ════════════════════════════════════════════════════════════╣        */
                     CLN_, CM_, DT_, P_,  Y_,        F_, G_, C_, R_, L_,
-                    A_,   AO_, CE_, GU_, I_,        D_, H_, T_, N_, S_,
+                    A_,   AO_, GE_, CU_, I_,        D_, H_, T_, N_, S_,
                     DQ_,  Q_,  J_,  K_,  X_,        B_, M_, W_, V_, Z_,
 
-                               MACRO, S_TAB,        NV_SPC, NUMBR
+                               MACRO, LS_,          NV_SPC, NUMBR
 
     ),
+
 
 /*══════════════════════════════| • • • • • • • - NAVIGATE:1 |══════════════════════════════════╣
                                                                                                 ║
@@ -371,13 +159,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                ╚═════╩═════╝       ╚═════╩═════╝                                ║
                                                                                                 ║        */
     [_NAVIGATE] = LAYOUT(/* NAVIGATE :1 ════════════════════════════════════════════════════════╣        */
-                    ___, ___, ___, ___, ___,        ___, KC_WBAK, P_TAB, N_TAB, KC_WFWD,
-                    ___, ___, ___, ___, ___,        ___, ArL, ArD, ArU, ArR,
-                    ___, ___, ___, ___, ___,        ___, HOME, P_DN, P_UP, END,
+                    ___, ___, ___, ___, ___,        ___, WBk,   P_TAB, N_TAB, WFwd,
+                    ___, ___, ___, ___, ___,        ___, ArL,   ArD,   ArU,   ArR,
+                    ___, ___, ___, ___, ___,        ___, HOME,  P_DN,  P_UP,  END,
 
                                    ___, ___,        FROM, ___
 
     ),
+
 
 /*══════════════════════════════| • • • • • • •  - NUMBERS:2 |══════════════════════════════════╣
                                                                                                 ║
@@ -399,11 +188,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_NUMBERS] = LAYOUT(/* NUMBERS :2 ══════════════════════════════════════════════════════════╣        */
                 ___,  ___,  ___,  ___,  ___,         X_VALU, _7, _8, _9, X_INCR,
                 ___,  ___,  ___,  ___,  ___,             _0, _4, _5, _6, X_TARE,
-                ___, ___, M_DASH, M_DOT, ___,        X_VALU, _1, _2, _3, X_DECR,
+                ___,  ___,  ___,  ___,  ___,         X_VALU, _1, _2, _3, X_DECR,
 
                                  MO(3), ___,        ___, FROM
 
     ),
+
 
 /*══════════════════════════════| • • • • • • • - FUNCTION:3 |══════════════════════════════════╣
                                                                                                 ║
@@ -431,6 +221,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     ),
 
+
 /*══════════════════════════════| • • • • • • • •  - MACRO:4 |══════════════════════════════════╣
                                                                                                 ║
         ╔══════╦══════╦══════╦══════╦══════╗       ╔══════╦══════╦══════╦══════╦══════╗         ║
@@ -456,6 +247,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                    FROM, ___, ___, MEDIA
 
     ),
+
+
 /*══════════════════════════════| • • • • • • • •  - MEDIA:5 |══════════════════════════════════╣
                                                                                                 ║
         ╔══════╦══════╦══════╦══════╦══════╗       ╔══════╦══════╦══════╦══════╦══════╗         ║
@@ -481,6 +274,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                        ___, ___, ___, FROM
 
     ),
+
+
 /*══════════════════════════════════════════════════════════════════════════════════════════════╣
                                                                                                 ║
 *═══════════════════════════════════════════════════════════════════════════════════════════════╣           */

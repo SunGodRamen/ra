@@ -30,7 +30,7 @@ char keymap_key_to_ascii(uint16_t keycode, bool shift) {
 
     switch (keycode) {
         case KC_SPACE:      return '\t';
-        case KC_TAB:      return '\t';
+        case KC_TAB:        return '\t';
         case KC_DOT:        return shift ? '>' : '.';
         case KC_COMMA:      return shift ? '<' : ',';
         case KC_SLASH:      return shift ? '?' : '/';

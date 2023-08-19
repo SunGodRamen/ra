@@ -1,37 +1,29 @@
 #rules.mk
-DYNAMIC_MACRO_ENABLE = yes
-LEADER_ENABLE = yes
-CONSOLE_ENABLE = yes
+DEFERRED_EXEC_ENABLE = yes
+DYNAMIC_TAPPING_TERM_ENABLE = yes
+NKRO_ENABLE = yes
+
+MOUSEKEY_ENABLE = no
 EXTRAKEY_ENABLE = yes
-MOUSEKEY_ENABLE = yes
-SWAP_HANDS_ENABLE = yes
 
+DYNAMIC_MACRO_ENABLE = yes
 COMBO_ENABLE = yes
-ifeq ($(strip $(COMBO_ENABLE)), yes)
-  VPATH += keyboards/gboards
-endif
+LEADER_ENABLE = yes
+SWAP_HANDS_ENABLE = yes
+TAP_DANCE_ENABLE = no
 
-RAW_ENABLE = no
-ifeq ($(strip $(RAW_ENABLE)), yes)
-  SRC += feature/app_keys/app_keys.c
-endif
+OS_DETECTION_ENABLE = yes
+CONSOLE_ENABLE = yes
+RAW_ENABLE = yes
 
-OS_DETECTION_ENABLE = no
-ifeq ($(strip $(OS_DETECTION_ENABLE)), yes)
-  SRC += feature/os_keys/os_keys.c
-endif
+SRC += feature/log/log.c
 
+SRC += feature/leader_key/leader_key.c
+SRC += feature/raw_hid/custom_raw_hid.c
+SRC += feature/os_detect/os_detect.c
 
 SRC += feature/mod_keys/mod_keys.c
-
 SRC += feature/feature_manager.c
+
 SRC += feature/keymap_ascii/keymap_ascii.c
 SRC += feature/counter_keys/counter_keys.c
-#SRC += feature/timer_keys/timer_keys.c
-#SRC += feature/morse_keys/morse_keys.c
-#SRC += feature/arch_tap_keys/arch_tap_keys.c
-
-#SRC += feature/textflow/textflow_keys.c
-#SRC += feature/textflow/parser.c
-#SRC += feature/textflow/interpreter.c
-#SRC += feature/textflow/textflow_variables.c

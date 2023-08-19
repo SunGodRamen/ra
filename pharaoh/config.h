@@ -1,6 +1,9 @@
 
 #pragma once
 
+#define RAW_USAGE_PAGE 0xFACC
+#define RAW_USAGE_ID 0x41
+
 /* key matrix size */
 #define MATRIX_ROWS 8
 #define MATRIX_COLS 10

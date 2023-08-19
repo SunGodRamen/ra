@@ -1,43 +1,18 @@
 //feature_manager.h
+#ifndef FEATURE_MANAGER_H
+#define FEATURE_MANAGER_H
 #pragma once
 
 #include "quantum.h"
 
-enum custom_keycodes {
-    KC_CUSTOM = SAFE_RANGE,
+#include "feature/feature_config.h"
+#include "feature/feature_key.h"
+#include "feature/log/log.h"
 
-    X_INCR,
-    X_TARE,
-    X_DECR,
-    X_VALU,
+#ifdef PROCESS_COUNTER_KEYS
+#include "feature/counter_keys/counter_keys.h"
+#endif
 
-    T_MODE,
-    T_STRT,
-    T_STOP,
-    T_LAP,
-    T_RST,
-    T_KEYSET,
+bool process_record_feature(uint16_t keycode, keyrecord_t *record);
 
-    T_FLOW,
-
-    M_DOT,
-    M_DASH,
-
-    M_FWRD,
-    M_BACK,
-
-    CUSTOM_END_RANGE
-};
-
-typedef bool (*custom_key_fn_t)(uint16_t keycode, keyrecord_t *record, void *data);
-
-typedef struct {
-    uint16_t keycode;
-    custom_key_fn_t fn;
-    void *data;
-} custom_key_t;
-
-bool process_custom_keys(uint16_t keycode, keyrecord_t *record);
-
-void process_custom_matrix_scan(void);
-void process_keyboard_init(void);
+#endif // FEATURE_MANAGER_H

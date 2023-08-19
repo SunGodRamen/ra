@@ -3,13 +3,29 @@
 #define COUNTER_KEYS_H
 #pragma once
 
-#include QMK_KEYBOARD_H
+#include "../feature_key.h"
 
-// Add the following function declarations
-bool tare_action(uint16_t keycode, keyrecord_t *record, void *data);
-bool incr_action(uint16_t keycode, keyrecord_t *record, void *data);
-bool decr_action(uint16_t keycode, keyrecord_t *record, void *data);
-bool valu_action(uint16_t keycode, keyrecord_t *record, void *data);
+#include "../keymap_ascii/keymap_ascii.h"
+#include "../log/log.h"
+
+#include "quantum.h"
+
+// works for now, need a better way to do this
+// dont know the safe range if more than one feature is used
+enum counter_keycodes {
+    X_TARE = 0x1000,
+    X_INCR,
+    X_DECR,
+    X_VALU,
+};
+
+extern const feature_key_t counter_keys[];
+
+bool process_counter_key(uint16_t keycode, keyrecord_t *record);
+bool tare_action(uint16_t keycode, keyrecord_t *record);
+bool incr_action(uint16_t keycode, keyrecord_t *record);
+bool decr_action(uint16_t keycode, keyrecord_t *record);
+bool valu_action(uint16_t keycode, keyrecord_t *record);
 
 bool handle_number_key_tap(uint16_t keycode, keyrecord_t *record);
 

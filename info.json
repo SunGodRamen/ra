@@ -1,6 +1,12 @@
 {
     "url": "https://localhost:8080",
     "maintainer": "null",
+    "manufacturer": "The Voice of Ra",
+    "usb": {
+        "vid": "0x4444",
+        "pid": "0x1111",
+        "device_version": "0.0.0"
+    },
     "layouts": {
         "LAYOUT_split_3x5_2": {
             "layout": [
