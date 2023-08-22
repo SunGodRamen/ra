@@ -2,35 +2,48 @@
 #define RAW_HID_MESSAGE_H
 #pragma once
 
+// 64 bytes is the maximum size of a raw HID message
+#define MAX_MESSAGE_LENGTH RAW_EPSIZE
 typedef struct {
+    uint8_t request_id;
     uint8_t message_code;
-    uint8_t command_code;
-    uint8_t data[62];
-} HIDMessage;
+    uint8_t headers[4];
+    uint8_t uri[16];
+    uint8_t body[MAX_MESSAGE_LENGTH - 22];
+} raw_hid_request;
+
+typedef struct {
+    uint8_t request_id;
+    uint8_t status_code;
+    uint8_t status_message[16];
+    uint8_t body[MAX_MESSAGE_LENGTH - 18];
+} raw_hid_response;
 
 enum message_codes {
-    PING = 0x01,
-    STATUS = 0x02,
-    COMMAND = 0x03,
-    DATA = 0x04,
-    ERR = 0x05,
-    LOG = 0x06,
+    _GET = 0x20,          // Retrieve data from the host
+    _POST = 0x21,         // Create a new record or event on the host
+    _PUT = 0x22,          // Update a record on the host
+    _PATCH = 0x23,        // Update a record property on the host
+    _DELETE = 0x24,       // Delete a record on the host
+    _CONNECT = 0x25,      // Establish a connection to the host
 };
 
 enum status_codes {
-    PASS = 0x20,
-    FAIL = 0x21
+    INFO = 0x11,          // Informational status codes
+    SUCCESS = 0x12,       // Success status codes
+    CLIENT_ERROR = 0x14,  // Client error status codes
+    SERVER_ERROR = 0x15,  // Server error status codes
 };
 
-enum command_codes {
-    LAUNCH = 0x01
-};
+enum header_codes {
+    LENGTH = 0x30,        // The length of the body
+    CONTENT = 0x31,       // The type of the body
+}
 
-enum app_codes {
-    CHROME = 0x01,
-    VS_CODE = 0x02,
-    TERMINAL = 0x03,
-    TASK_MANAGER = 0x04
-};
+enum content_codes {
+    BYTE = 0x40,          // A single byte
+    STRING = 0x41,        // A string of bytes
+    MULTIPART = 0x42,     // A multipart message
+}
 
 #endif // RAW_HID_MESSAGE_H
