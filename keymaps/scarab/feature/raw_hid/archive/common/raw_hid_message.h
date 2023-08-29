@@ -30,20 +30,24 @@ enum message_codes {
 
 enum status_codes {
     INFO = 0x11,          // Informational status codes
-    SUCCESS = 0x12,       // Success status codes
-    CLIENT_ERROR = 0x14,  // Client error status codes
-    SERVER_ERROR = 0x15,  // Server error status codes
+    SCSS = 0x12,       // Success status codes
+    CLT_ER = 0x14,  // Client error status codes
+    SRV_ER = 0x15,  // Server error status codes
 };
 
 enum header_codes {
     LENGTH = 0x30,        // The length of the body
     CONTENT = 0x31,       // The type of the body
-}
+};
 
 enum content_codes {
-    BYTE = 0x40,          // A single byte
-    STRING = 0x41,        // A string of bytes
-    MULTIPART = 0x42,     // A multipart message
+    _BYTE = 0x40,          // A single byte
+    _STRG = 0x41,        // A string of bytes
+    _MULT = 0x42,     // A multipart message
+};
+
+enum data_codes {
+
 }
 
 #endif // RAW_HID_MESSAGE_H

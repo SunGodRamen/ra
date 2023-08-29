@@ -3,10 +3,10 @@
 #pragma once
 
 #include "quantum.h"
-#include "raw_hid_controller.h"
-#include "raw_hid_message.h"
-#include "raw_hid_mappings.h"
-#include "log.h"
+// #include "../in/raw_hid_controller.h"
+#include "../common/raw_hid_message.h"
+// #include "raw_hid_mappings.h"
+#include "../../log/log.h"
 
 
 bool process_record_raw_hid(uint16_t keycode, keyrecord_t *record);
