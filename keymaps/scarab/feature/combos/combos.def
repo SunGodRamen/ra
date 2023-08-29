@@ -6,10 +6,17 @@
 // -----------------------------------------------------
 // HOTKEYS
 // -----------------------------------------------------
-COMB(CMB_LEAD,          QK_LEAD,            J_, K_)
-COMB(CMB_SWAP,          SH_MON,             NV_SPC, NUMBR)
+COMB(CMB_LEAD_L1,        LD_1,            LS_, CU_)
+COMB(CMB_LEAD_L2,        LD_2,            LS_, GE_)
+COMB(CMB_LEAD_L3,        LD_3,            LS_, AO_)
+COMB(CMB_LEAD_R1,        LD_1,            NV_SPC, H_)
+COMB(CMB_LEAD_R2,        LD_2,            NV_SPC, T_)
+COMB(CMB_LEAD_R3,        LD_3,            NV_SPC, N_)
+COMB(CMB_SWAP,          MO(6),              NV_SPC, S_)
+COMB(CMB_MOUS,          MO(7),              LS_, A_)
 
 COMB(CMB_YANK,          RCTL(KC_C),         A_, GE_)
+COMB(CMB_CUT,           RCTL(KC_X),         A_, X_)
 COMB(CMB_PUT,           RCTL(KC_V),         A_, CU_)
 COMB(CMB_BOARD,         RCTL(RSFT(KC_V)),   A_, AO_)
 

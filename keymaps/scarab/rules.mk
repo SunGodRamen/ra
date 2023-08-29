@@ -3,7 +3,7 @@ DEFERRED_EXEC_ENABLE = yes
 DYNAMIC_TAPPING_TERM_ENABLE = yes
 NKRO_ENABLE = yes
 
-MOUSEKEY_ENABLE = no
+MOUSEKEY_ENABLE = yes
 EXTRAKEY_ENABLE = yes
 
 DYNAMIC_MACRO_ENABLE = yes
@@ -19,7 +19,7 @@ RAW_ENABLE = yes
 SRC += feature/log/log.c
 
 SRC += feature/leader_key/leader_key.c
-SRC += feature/raw_hid/custom_raw_hid.c
+SRC += feature/raw_hid/controller.c
 SRC += feature/os_detect/os_detect.c
 
 SRC += feature/mod_keys/mod_keys.c

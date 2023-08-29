@@ -1,19 +1,25 @@
 #include "leader_key.h"
 
 void leader_end_user(void) {
+    #ifdef FEATURE_FLAG_DYNAMIC_MACRO_OVERRIDE
+    if (leader_sequence_dynamic_macro()) {
+        log_event(LOG_LEVEL_INFO, "leader_sequence_dynamic_macro");
+        return;
+    }
+    #endif
 
     if (leader_sequence_alt_tab()) {
         log_event(LOG_LEVEL_INFO, "leader_sequence_alt_tab");
         return;
     }
 
-    if (leader_sequence_log()) {
-        log_event(LOG_LEVEL_INFO, "leader_sequence_log");
+    if (leader_sequence_system()) {
+        log_event(LOG_LEVEL_INFO, "leader_sequence_system");
         return;
     }
 
-    if (leader_sequence_macros()) {
-        log_event(LOG_LEVEL_INFO, "leader_sequence_macro");
+    if (leader_sequence_app_focus()) {
+        log_event(LOG_LEVEL_INFO, "leader_sequence_app_focus");
         return;
     }
 
@@ -22,15 +28,15 @@ void leader_end_user(void) {
         return;
     }
 
-    // press LSFT to cancel
-    if (leader_sequence_one_key(KC_LSFT)) {
+    // press LSFT or SPACE to cancel
+    if (leader_sequence_one_key(LD_1, LS_) || leader_sequence_one_key(LD_2, LS_) || leader_sequence_one_key(LD_3, LS_)
+            || leader_sequence_one_key(LD_1, NV_SPC) || leader_sequence_one_key(LD_2, NV_SPC) || leader_sequence_one_key(LD_3, NV_SPC)) {
         log_event(LOG_LEVEL_INFO, "leader_sequence cancel");
         return;
     }
 
-    // if not handled above, send enter
-    tap_code16(KC_ENT);
-    log_event(LOG_LEVEL_INFO, "leader_sequence default");
+    // if not handled above
+    log_event(LOG_LEVEL_INFO, "leader_sequence timeout");
     return;
 }
 
@@ -63,27 +69,29 @@ bool leader_record_alt_tab(uint16_t keycode, keyrecord_t *record) {
         extend_deferred_exec(alt_tab_token, alt_tab_term); // Reset the timer
 
         switch (keycode) {
-            case KC_K:
+            case KC_U:
+            case KC_N:
                 if (record->event.pressed) {
                     tap_code(KC_TAB);
                 }
-                log_event(LOG_LEVEL_DEBUG, "alt_tab: KC_K");
+                log_event(LOG_LEVEL_DEBUG, "alt_tab");
                 return false;
 
-            case KC_J:
+            case KC_O:
+            case KC_H:
                 if (record->event.pressed) {
                     register_code(KC_RSFT);
                     tap_code(KC_TAB);
                     unregister_code(KC_RSFT);
                 }
-                log_event(LOG_LEVEL_DEBUG, "alt_tab: KC_J");
+                log_event(LOG_LEVEL_DEBUG, "shift,alt_tab");
                 return false;
 
             default:
                 cancel_deferred_exec(alt_tab_token); // Cancel the callback
                 unregister_code(KC_RALT);
                 alt_tabbing = false;
-                log_event(LOG_LEVEL_INFO, "alt_tab: cancelled");
+                log_event(LOG_LEVEL_INFO, "cancel,alt_tab");
                 return true;
         }
     }
@@ -91,7 +99,8 @@ bool leader_record_alt_tab(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool leader_sequence_alt_tab(void) {
-    if (leader_sequence_one_key(KC_K) || leader_sequence_one_key(KC_J)) {
+    if (leader_sequence_one_key(LD_2, KC_O) || leader_sequence_one_key(LD_2, KC_H)
+     || leader_sequence_one_key(LD_2, KC_N) || leader_sequence_one_key(LD_2, KC_U)) {
         if (!alt_tabbing) {
             register_code(KC_RALT);
             alt_tabbing = true;
@@ -105,10 +114,10 @@ bool leader_sequence_alt_tab(void) {
             log_event(LOG_LEVEL_DEBUG, "alt_tab: extend");
         }
 
-        if (leader_sequence_one_key(KC_J)) {
+        if (leader_sequence_one_key(LD_2, KC_U) || leader_sequence_one_key(LD_2, KC_N)) {
             tap_code(KC_TAB);
             log_event(LOG_LEVEL_DEBUG, "alt_tab: lead KC_J");
-        } else if (leader_sequence_one_key(KC_K)) {
+        } else if (leader_sequence_one_key(LD_2, KC_O) || leader_sequence_one_key(LD_2, KC_H)) {
             register_code(KC_RSFT);
             tap_code(KC_TAB);
             unregister_code(KC_RSFT);
@@ -119,111 +128,112 @@ bool leader_sequence_alt_tab(void) {
     return false;
 }
 
-bool leader_sequence_log(void) {
+bool leader_sequence_system(void) {
 
     // Logging Level
     // Log level: Off
-    if (leader_sequence_one_key(KC_0)) {
+    if (leader_sequence_one_key(LD_3, KC_0)) {
         debug_enable=false;
         return true;
     }
 
     // Log Level: Debug
-    if (leader_sequence_one_key(KC_1)) {
+    if (leader_sequence_one_key(LD_3, KC_1)) {
         debug_enable=true;
         set_log_level(LOG_LEVEL_DEBUG);
         return true;
     }
 
     // Log Level: Info
-    if (leader_sequence_one_key(KC_2)) {
+    if (leader_sequence_one_key(LD_3, KC_2)) {
         debug_enable=true;
         set_log_level(LOG_LEVEL_INFO);
         return true;
     }
 
     // Log Level: Error
-    if (leader_sequence_one_key(KC_3)) {
+    if (leader_sequence_one_key(LD_3, KC_3)) {
         debug_enable=true;
         set_log_level(LOG_LEVEL_ERROR);
         return true;
     }
 
+    // Reboot
+    if (leader_sequence_two_keys(LD_3, R_, B_)) {
+        reset_keyboard();
+        return true;
+    }
+
+    return false;
+}
+
+bool leader_sequence_app_focus(void) {
+    //VSCode
+    if (leader_sequence_one_key(LD_1, KC_V)) {
+        register_code(KC_LCTL);
+        register_code(KC_LALT);
+        tap_code16(KC_V);
+        unregister_code(KC_LALT);
+        unregister_code(KC_LCTL);
+        return true;
+    }
+    //Chrome
+    if (leader_sequence_one_key(LD_1, KC_C)) {
+        register_code(KC_LCTL);
+        register_code(KC_LALT);
+        tap_code16(KC_C);
+        unregister_code(KC_LALT);
+        unregister_code(KC_LCTL);
+        return true;
+    }
+    //Terminal:WSL
+    if (leader_sequence_one_key(LD_1, KC_L)) {
+        register_code(KC_LCTL);
+        register_code(KC_LALT);
+        tap_code16(KC_L);
+        unregister_code(KC_LALT);
+        unregister_code(KC_LCTL);
+        return true;
+    }
+    //Terminal:QMK
+    if (leader_sequence_one_key(LD_1, KC_Q)) {
+        register_code(KC_LCTL);
+        register_code(KC_LALT);
+        tap_code16(KC_Q);
+        unregister_code(KC_LALT);
+        unregister_code(KC_LCTL);
+        return true;
+    }
     return false;
 }
 
 bool leader_sequence_hotkeys(void) {
-    // VSCode Cmd
-    if (leader_sequence_one_key(KC_P)) {
-        register_code(KC_LSFT);
+    // VSCode CMD
+    if (leader_sequence_one_key(LD_1, KC_P)) {
+        register_code(LS_);
         register_code(KC_LCTL);
         tap_code16(KC_P);
         unregister_code(KC_LCTL);
-        unregister_code(KC_LSFT);
+        unregister_code(LS_);
         return true;
     }
-    return false;
-}
-
-void repeat(uint16_t keycode, int rep) {
-    for (int n = rep; n > 0; n--) {
-        register_code16(keycode);
-        unregister_code16(keycode);
-    }
-}
-
-bool leader_sequence_macros(void) {
-    // EMAIL
-    if (leader_sequence_two_keys(KC_E, KC_G)) {
-        SEND_STRING("AVONS394@gmail.com");
+    // VSCode OPEN
+    if (leader_sequence_one_key(LD_1, KC_O)) {
+        register_code(KC_LCTL);
+        tap_code16(KC_K);
+        unregister_code(KC_LCTL);
+        wait_ms(100);
+        register_code(KC_LCTL);
+        tap_code16(KC_O);
+        unregister_code(KC_LCTL);
         return true;
     }
 
-    // CODE SHORTHAND
-    // IF
-    if (leader_sequence_two_keys(KC_I, KC_F)) {
-        send_string("if (  ) {  }");
-        repeat(KC_LEFT, 7);
-        return true;
-    }
-    // FOR
-    if (leader_sequence_two_keys(KC_F, KC_R)) {
-        send_string("for (  ) {  }");
-        repeat(KC_LEFT, 7);
-        return true;
-    }
-    // INT I IN
-    if (leader_sequence_three_keys(KC_I, KC_N, KC_T)) {
-        send_string("int i=0; i< ; i++");
-        repeat(KC_LEFT, 6);
-        return true;
-    }
-    // FALSE
-    if (leader_sequence_one_key(KC_F)) {
-        send_string("false");
-        return true;
-    }
-    // TRUE
-    if (leader_sequence_one_key(KC_T)) {
-        send_string("true");
-        return true;
-    }
-    // SHEBANG
-    if (leader_sequence_two_keys(KC_S, KC_H)) {
-        send_string("#!/usr/bin/env ");
-        return true;
-    }
-    // SSH KEYGEN
-    if (leader_sequence_three_keys(KC_S, KC_S, KC_H)) {
-        send_string("ssh-keygen -t ed25519 -C ");
-        tap_code16(KC_DQUO);
-        tap_code16(KC_DQUO);
-        tap_code16(KC_LEFT);
-        return true;
-    }
-    // GIT PUSH
-    if (leader_sequence_two_keys(KC_G, KC_P)) {
-        send_string("git push");
+    // Explorer
+    if (leader_sequence_one_key(LD_1, KC_E)) {
+        register_code(KC_LGUI);
+        tap_code16(KC_E);
+        unregister_code(KC_LGUI);
         return true;
     }
     return false;

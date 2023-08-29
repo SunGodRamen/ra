@@ -15,6 +15,7 @@
 #define EXTRA_SHORT_COMBOS
 
 // Set leader timeout to 320 ms and enable per-key timing
+#define LEADER_OVERRIDE
 #define LEADER_TIMEOUT 320
 #define LEADER_PER_KEY_TIMING
 

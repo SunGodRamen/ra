@@ -4,6 +4,12 @@
 
 #include "quantum.h"
 
+enum leader_keys {
+    LD_1 = QK_LEADER,
+    LD_2 = PB_1,
+    LD_3 = PB_2,
+};
+
 enum shorthand_letter {
     A_ = KC_A,
     B_,
@@ -98,5 +104,8 @@ enum shorthand_function {
 #define VDN KC_VOLD
 #define VUP KC_VOLU
 
+#define BTN1 KC_BTN1
+#define BTN2 KC_BTN2
+#define BTN3 KC_BTN3
 
 #endif // ALIASES_H
