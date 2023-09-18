@@ -10,7 +10,7 @@ bool process_dummy_key(uint16_t keycode, keyrecord_t *record) {
 // concatenating all the feature arrays from the features you want to use
 const feature_key_t feature_keys[] = {
     {KC_NO, process_dummy_key},
-#ifdef PROCESS_COUNTER_KEYS
+#ifdef COUNTER_KEYS_ENABLE
     {X_TARE,    process_counter_key},
     {X_INCR,    process_counter_key},
     {X_DECR,    process_counter_key},
@@ -35,7 +35,7 @@ bool process_record_feature(uint16_t keycode, keyrecord_t *record) {
     for (uint8_t i = 0; i < NUM_FEATURE_KEYS; i++) {
         if (keycode == feature_keys[i].keycode) {
             // If it is, call the feature function, and return the result
-            log_event(LOG_LEVEL_INFO, "feature key pressed");
+            write_log_format(LOG_LEVEL_INFO, "feature key pressed\n");
             return feature_keys[i].fn(keycode, record);
         }
     }

@@ -1,4 +1,4 @@
-#include QMK_KEYBOARD_H
+#include "pharaoh.h"
 #include "i2c_master.h"
 #include <print.h>
 

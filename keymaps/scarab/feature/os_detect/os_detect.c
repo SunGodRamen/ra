@@ -8,9 +8,7 @@ bool swap_ctl_gui(uint16_t keycode, keyrecord_t *record);
 bool process_record_os(uint16_t keycode, keyrecord_t *record) {
     if (os == OS_UNSURE) {
         os = detected_host_os();
-        log_event(LOG_LEVEL_INFO, "detected os");
-        char* os_string = os_to_string(os);
-        log_event(LOG_LEVEL_INFO, os_string);
+        write_log_format(LOG_LEVEL_INFO, "Detected OS: %s\n", os_to_string(os));
     }
 
     if (!swap_ctl_gui(keycode, record)) {
@@ -22,8 +20,8 @@ bool process_record_os(uint16_t keycode, keyrecord_t *record) {
 
 bool swap_ctl_gui(uint16_t keycode, keyrecord_t *record) {
     if (os == OS_MACOS || os == OS_IOS) {
-        log_event(LOG_LEVEL_INFO, "detected os");
-        log_event(LOG_LEVEL_INFO, os_to_string(os));
+        write_log_format(LOG_LEVEL_INFO, "Detected OS: %s, swapping Ctrl and Gui keys\n", os_to_string(os));
+
         switch (keycode) {
             case KC_LCTL:
                 if (record->event.pressed) {
@@ -31,7 +29,7 @@ bool swap_ctl_gui(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     unregister_code(KC_LGUI);
                 }
-                return false; // Don't process the original keycode
+                return false;
 
             case KC_RCTL:
                 if (record->event.pressed) {
@@ -39,7 +37,7 @@ bool swap_ctl_gui(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     unregister_code(KC_RGUI);
                 }
-                return false; // Don't process the original keycode
+                return false;
 
             case KC_LGUI:
                 if (record->event.pressed) {
@@ -47,7 +45,7 @@ bool swap_ctl_gui(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     unregister_code(KC_LCTL);
                 }
-                return false; // Don't process the original keycode
+                return false;
 
             case KC_RGUI:
                 if (record->event.pressed) {
@@ -55,7 +53,7 @@ bool swap_ctl_gui(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     unregister_code(KC_RCTL);
                 }
-                return false; // Don't process the original keycode
+                return false;
 
             default:
                 return true;

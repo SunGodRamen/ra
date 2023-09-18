@@ -19,7 +19,7 @@ bool process_record_mod_keys(uint16_t keycode, keyrecord_t *record) {
     if (registered_keycode != KC_NO) {
         unregister_code16(registered_keycode);
         registered_keycode = KC_NO;
-        log_event(LOG_LEVEL_DEBUG, "unregister mod key");
+        write_log_format(LOG_LEVEL_DEBUG, "unregister mod key: 0x%04X\n", registered_keycode);
     }
 
     if (record->event.pressed) {
@@ -47,7 +47,7 @@ bool process_record_mod_keys(uint16_t keycode, keyrecord_t *record) {
                     if (IS_QK_MODS(registered_keycode) &&
                         (QK_MODS_GET_MODS(registered_keycode) & mod_mask) != 0) {
                         register_code16(registered_keycode);
-                        log_event(LOG_LEVEL_INFO, "register custom mod key");
+                        write_log_format(LOG_LEVEL_INFO, "register custom mod key: 0x%04X\n", registered_keycode);
                     } else {
                         if (IS_MODIFIER_KEYCODE(custom_mod_keys[i].modifier)) {
                             del_weak_mods(mod_mask);
@@ -55,14 +55,14 @@ bool process_record_mod_keys(uint16_t keycode, keyrecord_t *record) {
                             del_oneshot_mods(mod_mask);
 #endif
                             unregister_mods(mod_mask);
-                            log_event(LOG_LEVEL_INFO, "unregister custom mod key modifier");
+                            write_log_format(LOG_LEVEL_INFO, "unregister custom mod key modifier: 0x%04X\n", mod_mask);
                         } else {
                             unregister_code(custom_mod_keys[i].modifier);
-                            log_event(LOG_LEVEL_INFO, "unregister custom mod key");
+                            write_log_format(LOG_LEVEL_INFO, "unregister custom mod key: 0x%04X\n", custom_mod_keys[i].modifier);
                         }
                         register_code16(registered_keycode);
                         set_mods(mods);
-                        log_event(LOG_LEVEL_INFO, "register custom mod key, restore mods");
+                        write_log_format(LOG_LEVEL_INFO, "register custom mod key, restore mods: 0x%04X\n", registered_keycode);
                     }
                     return false;
                 }

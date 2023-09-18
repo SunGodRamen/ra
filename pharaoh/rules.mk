@@ -10,7 +10,7 @@ NKRO_ENABLE = yes           # Enable N-Key Rollover
 
 CUSTOM_MATRIX = lite
 NO_USB_STARTUP_CHECK = yes
-LTO_ENABLE = no
+LTO_ENABLE = yes
 
 SRC += matrix.c
 QUANTUM_LIB_SRC += i2c_master.c

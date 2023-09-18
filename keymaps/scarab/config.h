@@ -15,16 +15,20 @@
 #define EXTRA_SHORT_COMBOS
 
 // Set leader timeout to 320 ms and enable per-key timing
-#define LEADER_OVERRIDE
+#define LEADER_MULTI_KEY
+#define LEADER_VAR_LEN 6
+#define LEADER_SCANMOD
 #define LEADER_TIMEOUT 320
 #define LEADER_PER_KEY_TIMING
 
-// Set dynamic macro size to 200 and delay to 50 ms
+// Set dynamic macro size to 200 and delay to 2o0 ms
 #define DYNAMIC_MACRO_SIZE 200
-#define DYNAMIC_MACRO_DELAY 50
+#define DYNAMIC_MACRO_DELAY 25
 
-// Custom output for modified keys
-#define PROCESS_CUSTOM_MOD_KEYS
 
-// Custom feature keys
-#include "feature/feature_config.h"
+// Personal feature flags
+#define LOGGING_ENABLE
+#define HID_CONTROLLER_ENABLE
+#define MOD_KEYS_ENABLE
+#define FEATURE_KEYS_ENABLE
+#define COUNTER_KEYS_ENABLE

@@ -11,12 +11,14 @@
 #include "quantum.h"
 #include "pharaoh.h"
 
-enum _layers { _INSERT, _NAVIGATE, _NUMBERS, _FUNCTION, _MACRO, _MEDIA, _INVERT, _MOUSE };
+enum _layers { _INSERT, _NAVIGATE, _NUMBERS, _FUNCTION, _MACRO, _MEDIA, _INVERT, _MOUSE, _RAWHID, _VIEWING };
 
 // key aliases
 #include "aliases.h"
-#include "feature/log/log.h"
 
+#ifdef LOGGING_ENABLE
+#include "feature/log/log.h"
+#endif
 
 /*══════════════════════════════════════════════════════════════════════════════════════════════╣
                          ___  ___  ___  ___  _ _  ___  ___  ___                                 ║
@@ -25,6 +27,8 @@ enum _layers { _INSERT, _NAVIGATE, _NUMBERS, _FUNCTION, _MACRO, _MEDIA, _INVERT,
                         |_|  |___>|_|_| |_| `___'|_\_\|___><___/                                ║
                                                                                                 ║
 *═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
+
+#include "feature/feature_manager.h"
 
 #ifdef COMBO_ENABLE
 #include "feature/combos/keymap_combo.h"
@@ -38,24 +42,37 @@ enum _layers { _INSERT, _NAVIGATE, _NUMBERS, _FUNCTION, _MACRO, _MEDIA, _INVERT,
 #include "feature/os_detect/os_detect.h"
 #endif
 
-#ifdef LEADER_ENABLE
-#include "feature/leader_key/leader_key.h"
+#ifdef LEADER_MULTIKEY
+#include "feature/leader_key/leader_multikey.h"
+#endif
+#ifdef LEADER_SCANMOD
+#include "feature/leader_key/leader_scanmod.h"
+#endif
+#ifdef LEADER_HASH
+#include "feature/leader_key/leader_hash.h"
 #endif
 
-#ifdef RAW_ENABLE
-#include "feature/raw_hid/controller.h"
+#ifdef HID_CONTROLLER_ENABLE
+#include "feature/raw_hid/rawhid_controller.h"
 #endif
 
-#ifdef PROCESS_FEATURES
-#include "feature/feature_manager.h"
-#endif
-
-#ifdef PROCESS_CUSTOM_MOD_KEYS
+#ifdef MOD_KEYS_ENABLE
 #include "feature/mod_keys/mod_keys.h"
 #endif
 
+#ifdef COUNTER_KEYS_ENABLE
+#include "feature/counter_keys/counter_keys.h"
+#endif
+
+void raw_hid_receive_user(uint8_t *data, uint8_t length);
+
 void keyboard_post_init_user(void) {
+#ifdef LOGGING_ENABLE
     log_init();
+#endif
+#ifdef HID_CONTROLLER_ENABLE
+    set_raw_hid_receive_callback(raw_hid_receive_user);
+#endif
 }
 
 
@@ -66,42 +83,45 @@ void keyboard_post_init_user(void) {
                |_|  |_\_\`___'`___/|___><___/<___/ |_\_\|___>`___/`___'|_\_\|___/               ║
                                                                                                 ║
 *═══════════════════════════════════════════════════════════════════════════════════════════════╣           */
-
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-    // if a key is used by the feature, it returns false to stop processing the key
-#ifdef PROCESS_CUSTOM_MOD_KEYS
-    if (!process_record_mod_keys(keycode, record)){
-        log_key_event(LOG_LEVEL_INFO, "process_record_mod_keys", keycode, record);
-        return false;
-    }
-#endif
-#ifdef PROCESS_FEATURES
+#ifdef FEATURE_KEYS_ENABLE
     if (!process_record_feature(keycode, record)) {
-        log_key_event(LOG_LEVEL_INFO, "process_record_feature", keycode, record);
+        write_log_format(LOG_LEVEL_INFO, "%5u; process_record_feature: 0x%04X %s", record->event.time, keycode, record->event.pressed ? "pressed" : "released");
         return false;
     }
 #endif
-#ifdef RAW_ENABLE
+#ifdef MOD_KEYS_ENABLE
+    if (!process_record_mod_keys(keycode, record)){
+        write_log_format(LOG_LEVEL_INFO, "%5u; process_record_mod_keys: 0x%04X %s\n", record->event.time, keycode, record->event.pressed ? "pressed" : "released");
+        return false;
+    }
+#endif
+#ifdef HID_CONTROLLER_ENABLE
     if (!process_record_raw_hid(keycode, record)) {
-        log_key_event(LOG_LEVEL_INFO, "process_record_raw_hid", keycode, record);
+        write_log_format(LOG_LEVEL_INFO, "%5u; process_record_raw_hid: 0x%04X %s\n", record->event.time, keycode, record->event.pressed ? "pressed" : "released");
         return false;
     }
 #endif
-#ifdef LEADER_ENABLE
+#ifdef LEADER_MULTIKEY
     if (!process_record_leader(keycode, record)) {
-        log_key_event(LOG_LEVEL_INFO, "process_record_leader", keycode, record);
+        write_log_format(LOG_LEVEL_INFO, "%5u; process_record_leader: 0x%04X %s\n", record->event.time, keycode, record->event.pressed ? "pressed" : "released");
         return false;
     }
 #endif
 #ifdef OS_DETECTION_ENABLE
     if (!process_record_os(keycode, record)) {
-        log_key_event(LOG_LEVEL_INFO, "process_record_os", keycode, record);
+        write_log_format(LOG_LEVEL_INFO, "%5u; process_record_os: 0x%04X %s\n", record->event.time, keycode, record->event.pressed ? "pressed" : "released");
         return false;
     }
 #endif
     return true;
 }
 
+#ifdef HID_CONTROLLER_ENABLE
+void raw_hid_receive_user(uint8_t *data, uint8_t length) {
+
+}
+#endif
 
 /*══════════════════════════════════════════════════════════════════════════════════════════════╣
                              _ __ ___  _ _  __ __  ___  ___  ___                                ║
@@ -134,7 +154,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_INSERT] = LAYOUT(/* INSERT :0 ════════════════════════════════════════════════════════════╣        */
                     CLN_, CM_, DT_, P_,  Y_,        F_, G_, C_, R_, L_,
                     A_,   AO_, GE_, CU_, I_,        D_, H_, T_, N_, S_,
-                    DQ_,  Q_,  J_,  K_,  X_,        B_, M_, W_, V_, Z_,
+                    DQ_,  Q_,  J_,  K_,  X_,       RW_B, M_, W_, V_, Z_,
 
                                MACRO, LS_,          NV_SPC, NUMBR
 
@@ -240,11 +260,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                ╚═════╩═════╝       ╚═════╩═════╝                                ║
                                                                                                 ║        */
     [_MACRO] = LAYOUT(/*     MACRO :4 ══════════════════════════════════════════════════════════╣        */
-             ___,   ___,   ___,   ___,  ___,       ___, ___, ___, ___, ___,
-             ___, ___, DM_PLY2, DM_PLY1, ___,      ___, ___, ___, ___, ___,
-             ___, ___, DM_REC2, DM_REC1, ___,      ___, ___, ___, ___, ___,
+                ___, ___, ___,   ___,   ___,      ___, ___, ___, ___, ___,
+                ___, ___, DM_P2, DM_P1, ___,      ___, ___, ___, ___, ___,
+                ___, ___, DM_R2, DM_R1, ___,      ___, ___, ___, ___, ___,
 
-                                   FROM, ___, ___, MEDIA
+                                     FROM, ___, ___, MEDIA
 
     ),
 
@@ -279,17 +299,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                                                                 ║
         ╔══════╦══════╦══════╦══════╦══════╗       ╔══════╦══════╦══════╦══════╦══════╗         ║
         ║      ║      ║      ║      ║      ║       ║      ║      ║      ║      ║      ║         ║
-        ║   :  ║   ,  ║  .   ║  P   ║  Y   ║       ║   F  ║   G  ║   C  ║   R  ║   L  ║         ║
+        ║   L  ║   R  ║  C   ║  G   ║  F   ║       ║   Y  ║   P  ║   .  ║   ,  ║   :  ║         ║
         ╠══════╬══════╬══════╬══════╬══════╣       ╠══════╬══════╬══════╬══════╬══════╣         ║
         ║      ║      ║      ║      ║      ║       ║      ║      ║      ║      ║      ║         ║
-        ║   A  ║   O  ║  E   ║  U   ║  I   ║       ║   D  ║   H  ║   T  ║   N  ║   S  ║         ║
+        ║   S  ║   N  ║  T   ║  H   ║  D   ║       ║   I  ║   U  ║   E  ║   O  ║   A  ║         ║
         ╠══════╬══════╬══════╬══════╬══════╣       ╠══════╬══════╬══════╬══════╬══════╣         ║
         ║      ║      ║      ║      ║      ║       ║      ║      ║      ║      ║      ║         ║
-        ║   "  ║   Q  ║  J   ║  K   ║  X   ║       ║   B  ║   M  ║   W  ║   V  ║   Z  ║         ║
+        ║   Z  ║   V  ║  W   ║  M   ║  B   ║       ║   X  ║   K  ║   J  ║   Q  ║   "  ║         ║
         ╚══════╩══════╩══════╩══════╩══════╝       ╚══════╩══════╩══════╩══════╩══════╝         ║
                                ╔═════╦═════╗       ╔═════╦═════╗                                ║
-                               ║     ║LSFT/║       ║NAVGT║NUMBR║                                ║
-                               ║MACRO║ TAB ║       ║/SPCE║/LEAD║                                ║
+                               ║     ║     ║       ║     ║     ║                                ║
+                               ║     ║     ║       ║     ║     ║                                ║
                                ╚═════╩═════╝       ╚═════╩═════╝                                ║
                                                                                                 ║        */
     [_INVERT] = LAYOUT(/* INVERT :6 ════════════════════════════════════════════════════════════╣        */
@@ -301,12 +321,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     ),
 
-    [_MOUSE] = LAYOUT(/* _MOUSE :7 ════════════════════════════════════════════════════════════╣        */
+    [_MOUSE] = LAYOUT(/* _MOUSE :7 ═════════════════════════════════════════════════════════════╣        */
                      ___, ___, ___, ___, ___,      ___, ___, ___, ___, ___,
-                    ___, BTN2, BTN3, BTN1, ___,      ___, ___, ___, ___, ___,
+                   ___, BTN2, BTN3, BTN1, ___,     ___, ___, ___, ___, ___,
                      ___, ___, ___, ___, ___,      ___, ___, ___, ___, ___,
 
                                        ___, ___, ___, ___
+    ),
+
+    [_RAWHID] = LAYOUT(/* _RAWHID :8 ═══════════════════════════════════════════════════════════╣        */
+                     ___, ___, ___, ___, ___,      ___, ___, ___, ___, ___,
+                   ___, RAW3, RAW2, RAW1, ___,     ___, ___, ___, ___, ___,
+                     ___, ___, ___, ___, ___,      ___, ___, ___, ___, ___,
+
+                                       ___, ___, ___, ___
+    ),
+
+    [_VIEWING] = LAYOUT(/* VIEWING :9 ════════════════════════════════════════════════════════╣        */
+                    ___, ___, ___, ___, ___,        VUP, WBk,   P_TAB, N_TAB, WFwd,
+                    ___, ___, ___, ___, ___,        VDN, ArL,   ArD,   ArU,   ArR,
+                    ___, ___, ___, ___, ___,        PLAY, CLN_, P_DN,  P_UP,  SCL_,
+
+                                   FROM, FROM,      LS_, MO(7)
+
     ),
 
 /*══════════════════════════════════════════════════════════════════════════════════════════════╣

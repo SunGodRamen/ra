@@ -16,14 +16,19 @@ OS_DETECTION_ENABLE = yes
 CONSOLE_ENABLE = yes
 RAW_ENABLE = yes
 
-SRC += feature/log/log.c
+#FEATURES
+LOGGING_ENABLE = yes
+HID_CONTROLLER_ENABLE = yes
+MOD_KEYS_ENABLE = yes
 
-SRC += feature/leader_key/leader_key.c
-SRC += feature/raw_hid/controller.c
-SRC += feature/os_detect/os_detect.c
+LEADER_MULTIKEY_ENABLE = yes
+LEADER_SCANMOD_ENABLE = yes
+#LEADER_HASH_ENABLE = yes
 
-SRC += feature/mod_keys/mod_keys.c
-SRC += feature/feature_manager.c
+FEATURE_KEYS_ENABLE = yes
+COUNTER_KEYS_ENABLE = yes
 
-SRC += feature/keymap_ascii/keymap_ascii.c
-SRC += feature/counter_keys/counter_keys.c
+KEYBOARD_DIR = keyboards/ra
+KEYMAP_DIR = $(KEYBOARD_DIR)/keymaps/scarab
+FEATURE_DIR = $(KEYMAP_DIR)/feature
+include $(FEATURE_DIR)/feature.mk

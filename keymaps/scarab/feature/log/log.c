@@ -30,26 +30,13 @@ static bool should_log(log_level_t level) {
     #endif
 }
 
-void log_key_event(log_level_t level, char *event, uint16_t keycode, keyrecord_t *record) {
+void write_log_format(log_level_t level, const char* format, ...) {
     if (should_log(level)) {
-        dprintf("%5u; %s: 0x%04X %s\n", record->event.time, event, keycode, record->event.pressed ? "pressed" : "released");
-    }
-}
-
-void log_int(log_level_t level, int integer) {
-    if (should_log(level)) {
-        dprintf("%d", integer);
-    }
-}
-
-void log_event(log_level_t level, char *event) {
-    if (should_log(level)) {
-        dprintf("%5u; %s\n", timer_read(), event);
-    }
-}
-
-void log_string(log_level_t level, char *string) {
-    if (should_log(level)) {
-        dprintf("%s", string);
+        char buffer[BUFFER_SIZE];
+        va_list args;
+        va_start(args, format);
+        vsnprintf(buffer, sizeof(buffer), format, args);
+        va_end(args);
+        dprintf("%s", buffer);
     }
 }

@@ -2,8 +2,12 @@
 #define LOG_H
 
 #include "quantum.h"
+#include <stdarg.h>
+#include <stdio.h>
 #include "eeprom.h"
 #include "print.h"
+
+#define BUFFER_SIZE 256
 
 typedef enum {
     LOG_LEVEL_ERROR,   // Lowest value, logs only errors
@@ -14,9 +18,6 @@ typedef enum {
 void log_init(void);
 void set_log_level(log_level_t level);
 
-void log_key_event(log_level_t level, char *event, uint16_t keycode, keyrecord_t *record);
-void log_event(log_level_t level, char *event);
-void log_string(log_level_t level, char *string);
-void log_int(log_level_t level, int integer);
+void write_log_format(log_level_t level, const char* format, ...);
 
 #endif // LOG_H

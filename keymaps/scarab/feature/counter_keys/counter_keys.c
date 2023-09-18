@@ -1,4 +1,3 @@
-//counter_keys.c
 #include "counter_keys.h"
 
 static int16_t counter = 1;
@@ -7,8 +6,9 @@ static bool incr_is_held = false;
 static bool decr_is_held = false;
 static bool number_key_pressed = false;
 
-bool process_counter_key(uint16_t keycode, keyrecord_t *record){
-    log_key_event(LOG_LEVEL_INFO, "process_counter_key", keycode, record);
+bool process_counter_key(uint16_t keycode, keyrecord_t *record) {
+    write_log_format(LOG_LEVEL_INFO, "process_counter_key: keycode = %u, pressed = %s\n", keycode, record->event.pressed ? "true" : "false");
+
     switch (keycode) {
         case X_INCR:
             return incr_action(keycode, record);
@@ -36,7 +36,7 @@ bool process_counter_key(uint16_t keycode, keyrecord_t *record){
 bool tare_action(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         counter = 1;
-        log_event(LOG_LEVEL_INFO, "tare_action");
+        write_log_format(LOG_LEVEL_INFO, "tare_action: Counter reset to %d\n", counter);
         return false;
     }
     return true;
@@ -46,15 +46,14 @@ bool incr_action(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         incr_is_held = true;
         number_key_pressed = false;
-        log_event(LOG_LEVEL_INFO, "incr_action.press");
+        write_log_format(LOG_LEVEL_INFO, "incr_action: Key pressed");
     } else {
         incr_is_held = false;
         if (!number_key_pressed) {
             counter++;
-            log_int(LOG_LEVEL_INFO, counter);  // Log the current value of the counter.
-            log_event(LOG_LEVEL_INFO, "incr_action.tap");
+            write_log_format(LOG_LEVEL_INFO, "incr_action: Counter incremented to %d\n", counter);
         }
-        log_event(LOG_LEVEL_INFO, "incr_action.release");
+        write_log_format(LOG_LEVEL_INFO, "incr_action: Key released");
     }
     return true;
 }
@@ -63,15 +62,14 @@ bool decr_action(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         decr_is_held = true;
         number_key_pressed = false;
-        log_event(LOG_LEVEL_INFO, "decr_action.press");
+        write_log_format(LOG_LEVEL_INFO, "decr_action: Key pressed\n");
     } else {
         decr_is_held = false;
         if (!number_key_pressed) {
             counter--;
-            log_int(LOG_LEVEL_INFO, counter);  // Log the current value of the counter.
-            log_string(LOG_LEVEL_INFO, "decr_action.tap - counter decremented");
+            write_log_format(LOG_LEVEL_INFO, "decr_action: Counter decremented to %d\n", counter);
         }
-        log_event(LOG_LEVEL_INFO, "decr_action.release");
+        write_log_format(LOG_LEVEL_INFO, "decr_action: Key released\n");
     }
     return true;
 }
@@ -79,8 +77,7 @@ bool decr_action(uint16_t keycode, keyrecord_t *record) {
 bool valu_action(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         send_integer_as_keycodes(counter);
-        log_int(LOG_LEVEL_INFO, counter);  // Log the current value of the counter.
-        log_event(LOG_LEVEL_INFO, "valu_action - sent counter value");
+        write_log_format(LOG_LEVEL_INFO, "valu_action: Sent counter value %d\n", counter);
         return false;
     }
     return true;
@@ -95,15 +92,14 @@ bool handle_number_key_tap(uint16_t keycode, keyrecord_t *record) {
     if (incr_is_held) {
         counter += number_value;
         number_key_pressed = true;
-        log_string(LOG_LEVEL_INFO, "incr_action with number key - counter incremented");
-        return false;  // Suppress number key output when incr is held
+        write_log_format(LOG_LEVEL_INFO, "incr_action with number key: Counter incremented to %d\n", counter);
+        return false;
     } else if (decr_is_held) {
         counter -= number_value;
         number_key_pressed = true;
-        log_string(LOG_LEVEL_INFO, "decr_action with number key - counter decremented");
-        return false;  // Suppress number key output when decr is held
+        write_log_format(LOG_LEVEL_INFO, "decr_action with number key: Counter decremented to %d\n", counter);
+        return false;
     }
 
     return true;
 }
-

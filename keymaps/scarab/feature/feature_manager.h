@@ -4,12 +4,13 @@
 #pragma once
 
 #include "quantum.h"
+#include "stdbool.h"
+#include "stdint.h"
 
-#include "feature/feature_config.h"
 #include "feature/feature_key.h"
 #include "feature/log/log.h"
 
-#ifdef PROCESS_COUNTER_KEYS
+#ifdef COUNTER_KEYS_ENABLE
 #include "feature/counter_keys/counter_keys.h"
 #endif
 
